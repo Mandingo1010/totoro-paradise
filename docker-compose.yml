@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  totoro-paradise:
+    image: totoro-paradise:latest
+    container_name: totoro-paradise
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: runner
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NUXT_HOST=0.0.0.0
+      - NUXT_PORT=3000
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - totoro-network
+
+networks:
+  totoro-network:
+    driver: bridge
