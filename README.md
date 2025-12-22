@@ -4,7 +4,7 @@ Fuck `totoro school`, without MITM.
 
 The name is netaed from `nekopara`.
 
-## 感谢 @BeiYanYunYi
+## 感谢 @BeiyanYunYi
 - 源码来自 https://github.com/BeiyanYunyi/totoro-paradise
 
 ## ✨ 功能特性
