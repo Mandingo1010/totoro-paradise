@@ -2,6 +2,22 @@
 
 > 无需中间人攻击的阳光体育跑步模拟工具
 
+## 🚀 立即下载使用 (推荐)
+
+### 📥 便携版下载
+**最新版本**: [v2.0.4 Windows便携版](https://github.com/Mandingo1010/totoro-paradise/releases/latest) 
+
+🎯 **一键下载，解压即用！无需安装任何依赖**
+
+1. 点击上方链接下载 `totoro-paradise-v2.0.4-windows.zip`
+2. 解压到任意文件夹  
+3. 双击 `启动 Totoro Paradise.bat`
+4. 等待浏览器自动打开，开始使用！
+
+**系统要求**: Windows 10/11 + Node.js 16+ (程序会自动检测并提示安装)
+
+---
+
 ## 🚀 快速开始 (普通用户)
 
 ### 📥 下载便携版 (推荐)
