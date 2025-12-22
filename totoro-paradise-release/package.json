@@ -1,0 +1,8 @@
+﻿{
+    "name":  "totoro-paradise",
+    "version":  "2.0.4-rev.2",
+    "type":  "module",
+    "scripts":  {
+                    "start":  "node .output/server/index.mjs"
+                }
+}
