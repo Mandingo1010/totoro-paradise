@@ -47,49 +47,54 @@ echo.
 echo ╔══════════════════════════════════════════════════════════════╗
 echo ║                    🦫 Totoro Paradise                        ║
 echo ║                     阳光跑步助手                              ║
-echo ║                    便携版 v2.0.4                             ║
+echo ║                    v2.0.4 便携版                             ║
 echo ╚══════════════════════════════════════════════════════════════╝
 echo.
 
-echo 🚀 启动服务器...
-
 REM 检查 Node.js
+echo [1/3] 🔍 检查运行环境...
 node --version >nul 2>&1
 if errorlevel 1 (
     echo ❌ 错误: 未检测到 Node.js
     echo.
     echo 💡 请先安装 Node.js:
     echo    1. 访问 https://nodejs.org
-    echo    2. 下载并安装 LTS 版本
+    echo    2. 下载并安装 LTS 版本 ^(推荐 18.x 或 20.x^)
     echo    3. 重新运行此程序
     echo.
     pause
     exit /b 1
 )
-
-echo ✅ Node.js 已安装
+echo ✅ Node.js 环境正常
 
 REM 启动服务器
-echo 🌐 启动 Totoro Paradise...
+echo [2/3] 🚀 启动服务器...
+echo.
+echo 📍 本地地址: http://localhost:3000
+echo 🛠️  开发工具: 按 Shift + Alt + D
+echo ⚠️  停止服务: 关闭此窗口
+echo.
+
+REM 启动服务器
 start /B node .output/server/index.mjs
 
 REM 等待服务器启动
-echo ⏳ 等待服务器启动...
+echo [3/3] ⏳ 等待服务器启动...
 timeout /t 3 /nobreak >nul
 
 REM 打开浏览器
-echo 🌐 打开浏览器...
+echo 🌐 正在打开浏览器...
 start http://localhost:3000
 
 echo.
 echo ✅ 启动完成！
-echo 📍 访问地址: http://localhost:3000
-echo ⚠️  关闭此窗口将停止服务器
 echo.
 echo 💡 使用说明:
 echo    - 阳光跑: 固定路线跑步模拟
 echo    - 自由跑: 自定义距离和时间
 echo    - 记录查看: 查看历史跑步记录
+echo.
+echo 📞 如需帮助，请访问: https://github.com/Mandingo1010/totoro-paradise
 echo.
 
 REM 保持窗口打开
@@ -175,8 +180,6 @@ https://github.com/Mandingo1010/totoro-paradise
 $readme | Out-File "$releaseDir/使用说明.md" -Encoding UTF8
 
 Write-Host "✅ Release 包创建完成: $releaseDir" -ForegroundColor Green
-Write-Host "📁 包含文件:" -ForegroundColor Cyan
-Get-ChildItem $releaseDir -Recurse | Select-Object Name, Length | Format-Table
 
 # 创建压缩包
 Write-Host "📦 创建压缩包..." -ForegroundColor Yellow
