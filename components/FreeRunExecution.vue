@@ -378,6 +378,30 @@ const submitRunData = async () => {
       }
       
       status.value = 'completed'
+      
+      // 发送浏览器通知提醒用户
+      if ('Notification' in window) {
+        const notifyUser = () => {
+          new Notification('🦫 Totoro Paradise - 跑步完成！', {
+            body: `距离: ${runData.value.distance}km | 时间: ${formatTime(totalTime.value)}\n点击返回查看详情`,
+            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">🦫</text></svg>',
+            tag: 'freerun-complete',
+            requireInteraction: true,
+            badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">✓</text></svg>'
+          })
+        }
+        
+        if (Notification.permission === 'granted') {
+          notifyUser()
+        } else if (Notification.permission !== 'denied') {
+          Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+              notifyUser()
+            }
+          })
+        }
+      }
+      
       emit('completed', recordId.value)
     } else {
       const errorMsg = response?.message || '服务器返回错误'

@@ -162,7 +162,7 @@ export class FreeRunConfigManager {
                 validationRules: {
                     distance: {
                         min: 0.5,
-                        max: 20
+                        max: 2000
                     },
                     speed: {
                         min: 3,
@@ -198,7 +198,7 @@ export class FreeRunConfigManager {
                 validationMessages: {
                     'distance.required': '请输入跑步距离',
                     'distance.min': '距离不能少于0.5公里',
-                    'distance.max': '距离不能超过20公里',
+                    'distance.max': '距离不能超过2000公里',
                     'speed.required': '请输入平均速度',
                     'speed.min': '速度不能低于3公里/小时',
                     'speed.max': '速度不能超过25公里/小时',
