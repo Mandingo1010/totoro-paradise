@@ -301,38 +301,82 @@ const submitRunData = async () => {
       routePoints = generateMockRoute(parseFloat(runData.value.distance))
     }
 
-    // 在服务器端提交 - 这样即使关闭浏览器也会继续提交
-    console.log('Submitting run data to server...')
-    const response = await $fetch('/api/totoro/freerun-submit', {
-      method: 'POST',
-      body: {
-        // Session data
-        token: session.value.token,
-        schoolId: session.value.schoolId,
-        campusId: session.value.campusId,
-        stuNumber: session.value.stuNumber,
-        // Run data
-        distance: runData.value.distance,
-        duration: runData.value.duration,
-        avgSpeed: runData.value.avgSpeed,
-        avgPace: runData.value.avgPace,
-        calorie: runData.value.calorie,
-        steps: runData.value.steps,
-        startTime: runData.value.startTime,
-        endTime: runData.value.endTime,
-        mac: runData.value.mac,
-        deviceInfo: runData.value.deviceInfo,
-        // Route data
-        routeId,
-        taskId,
-        routePoints,
-      },
+    // 第一步：通知服务器开始跑步
+    console.log('Step 1: Calling getRunBegin...')
+    await TotoroApiWrapper.getRunBegin({
+      campusId: session.value.campusId,
+      schoolId: session.value.schoolId,
+      stuNumber: session.value.stuNumber,
+      token: session.value.token,
     })
+    console.log('getRunBegin completed')
+
+    // Build the full FreeRunRequest with session data
+    // 注意：使用真实的 routeId 和 taskId
+    const freeRunRequest = {
+      // From session (BasicRequest)
+      token: session.value.token,
+      schoolId: session.value.schoolId,
+      campusId: session.value.campusId,
+      stuNumber: session.value.stuNumber,
+      // From generated run data
+      distance: runData.value.distance,
+      duration: runData.value.duration,
+      avgSpeed: runData.value.avgSpeed,
+      avgPace: runData.value.avgPace,
+      calorie: runData.value.calorie,
+      steps: runData.value.steps,
+      startTime: runData.value.startTime,
+      endTime: runData.value.endTime,
+      mac: runData.value.mac,
+      deviceInfo: runData.value.deviceInfo,
+      runType: '1' as const, // 自由跑标识
+      // 使用真实的路线ID和任务ID
+      routeId,
+      taskId,
+    }
+
+    // 第二步：提交跑步数据
+    console.log('Step 2: Submitting run data:')
+    console.log('  - routeId:', routeId)
+    console.log('  - taskId:', taskId)
+    console.log('  - distance:', runData.value.distance)
+    console.log('  - duration:', runData.value.duration)
+    const response = await TotoroApiWrapper.submitFreeRun(freeRunRequest)
     
-    console.log('Server response:', response)
+    // Debug: Log the actual response
+    console.log('API Response (full):', JSON.stringify(response, null, 2))
     
-    if (response && response.success) {
-      recordId.value = response.recordId || 'success'
+    // Check for success - the API returns status '00' for success
+    // The record ID might be in scantronId (from SunRunExercisesResponse) or data.recordId
+    if (response && response.status === '00') {
+      // Try to get record ID from different possible locations
+      const responseAny = response as any
+      const scantronId = responseAny.scantronId || responseAny.data?.recordId
+      recordId.value = scantronId || 'success'
+      
+      // 第三步：提交路线详情 - 这是让记录在手机客户端显示的关键步骤
+      if (scantronId) {
+        try {
+          console.log('Step 3: Submitting route detail with', routePoints.length, 'points...')
+          
+          await TotoroApiWrapper.sunRunExercisesDetail({
+            pointList: routePoints,
+            scantronId: scantronId,
+            breq: {
+              campusId: session.value.campusId,
+              schoolId: session.value.schoolId,
+              stuNumber: session.value.stuNumber,
+              token: session.value.token,
+            },
+          })
+          console.log('Route detail submitted successfully')
+        } catch (detailError) {
+          console.warn('Failed to submit route detail:', detailError)
+          // 即使路线详情提交失败，主记录已经提交成功，所以不抛出错误
+        }
+      }
+      
       status.value = 'completed'
       emit('completed', recordId.value)
     } else {
